@@ -1,18 +1,20 @@
 package main
+
 /*	BUFIO se usa para la introduccion de datos por consola :)
-	STRCONV se usa para las validaciones de tipo buhhhh :( 
+	STRCONV se usa para las validaciones de tipo buhhhh :(
 	FMT es el formateador de texto, me permite imprimir texto en consola
 	MATH creo que su nombre lo dice solo xd
 */
 import (
-	"fmt" 
-	"math" 
-	"bufio" 
-	"strconv" 
-	"os" 
+	"bufio"
+	"fmt"
+	"math"
+	"os"
+	"strconv"
 	"strings"
 )
-//Estaba viendo traductores mientras estaba haciendo esto por eso es que es tan largo estaba ladillado 
+
+//Estaba viendo traductores mientras estaba haciendo esto por eso es que es tan largo estaba ladillado
 // DECLARACION DE INTERFAZ Y ESTRUCTURAS
 type Figure interface {
 	area() float64;
@@ -83,63 +85,54 @@ func print_figure(f Figure){
 	return;
 }
 
-func float_validation(input string) float64{
-	temp, err := strconv.ParseFloat(strings.TrimSpace(input),64)
-	if err != nil || math.IsNaN(temp) || math.IsInf(temp,0){
+//FUNCIONES HELPERS
+
+func float_input(text string, r *bufio.Reader) float64{
+	fmt.Print(text)
+	input_string, _ := r.ReadString('\n');
+	input, err := strconv.ParseFloat(strings.TrimSpace(input_string),64)
+	if err != nil || math.IsNaN(input) || math.IsInf(input,0){
+		fmt.Println("Se le asigno el valor de 0 por mala escritura de datos")
 		return 0
 	}
-	return temp
+	return input
 }
 
-func integer_validation(input string) int{
-	temp, err := strconv.Atoi(strings.TrimSpace(input))
-	if err != nil {
-		fmt.Println("Entrada inválida: digite un número entero.")
-		return 0;
-	}
-	return temp;
-}
+
+
 
 func main(){
-	scanner := bufio.NewScanner(os.Stdin);
+	scanner := bufio.NewReader(os.Stdin);
 	//Declaracion de ciclo infinito se hace con for {} aura
 	for{
 		var op_string string;
 		fmt.Println("Figura que desea calcular:\nA = Rectangulo\nB = Circunferencia\nC = Triangle\nD = Exit")
 		fmt.Print("Opcion: ")
-		if !scanner.Scan() {
+		
+		op_string, e := scanner.ReadString('\n');
+		if e!= nil{
+			fmt.Print("Como pudo dar error estooo")
 			break
 		}
-		op_string = strings.ToLower(scanner.Text());
-		switch op_string{
+		op_p := strings.ToLower(op_string)
+		op := strings.TrimSpace(op_p);
+		switch op{
 		case "a":
-			var h float64
-			var w float64
 			fmt.Println("Haz elegido el Rectangulo a continuacion ingrese sus datos: ")
-			fmt.Print("Altura : ")
-			fmt.Scan(&h)
-			fmt.Print("Anchura : ")
-			fmt.Scan(&w)
+			var h float64 = float_input("Altura : ", scanner)
+			var w float64 = float_input("Anchura : ", scanner)
 			fig := Rectangle{nam: "Rectangulo", height: h, width: w}
 			print_figure(fig);
 		case "b":
-			var r float64
 			fmt.Println("Haz elegido la Circunferencia a continuacion ingrese sus datos: ")
-			fmt.Print("Radio : ")
-			fmt.Scan(&r)
+			var r float64 = float_input("Radio : ",scanner)
 			fig := Circle{nam: "Circunferencia", radious: r}
 			print_figure(fig);
 		case "c":
-			var lado_a float64;
-			var lado_b float64;
-			var lado_c float64;
 			fmt.Println("Haz elegido el Triangulo a continuacion ingrese sus datos: ")
-			fmt.Print("Largo lado A: ")
-			fmt.Scan(&lado_a)
-			fmt.Print("Largo lado B: ")
-			fmt.Scan(&lado_b)
-			fmt.Print("Largo lado C: ")
-			fmt.Scan(&lado_c)
+			var lado_a float64 = float_input("Largo lado A: ", scanner);
+			var lado_b float64 = float_input("Largo lado B: ", scanner);
+			var lado_c float64 = float_input("Largo lado C: ", scanner);
 			fig := Triangle{nam: "Triangulo", a: lado_a, b: lado_b, c: lado_c}
 			print_figure(fig);
 		case "d":
