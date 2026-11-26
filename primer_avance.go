@@ -4,7 +4,14 @@ package main
 	FMT es el formateador de texto, me permite imprimir texto en consola
 	MATH creo que su nombre lo dice solo xd
 */
-import ("fmt", "math", "bufio","strconv","os","strings")
+import (
+	"fmt" 
+	"math" 
+	"bufio" 
+	"strconv" 
+	"os" 
+	"strings"
+)
 //Estaba viendo traductores mientras estaba haciendo esto por eso es que es tan largo estaba ladillado 
 // DECLARACION DE INTERFAZ Y ESTRUCTURAS
 type Figure interface {
@@ -14,18 +21,18 @@ type Figure interface {
 }
 
 type Rectangle struct {
-	nombre string;
+	nam string;
 	height float64;
-	witdh float64;
+	width float64;
 }
 
 type Circle struct {
-	nombre string;
+	nam string;
 	radious float64;
 }
 
 type Triangle struct {
-	nombre string;
+	nam string;
 	a float64;
 	b float64;
 	c float64;
@@ -33,19 +40,19 @@ type Triangle struct {
 // METODOS HEREDADDS DE LA CLASE PADRE FIGURA
 //Los de perimetro los hice por declaracion corta y area por la otra
 func (r Rectangle) name() string {
-	return r.name;
+	return r.nam;
 }
 
 func (r Rectangle) area() float64{
-	var area float64 = r.height * r.witdh;
+	var area float64 = r.height * r.width;
 	return area;
 }
 func (r Rectangle) perimeter() float64{
-	perimeter := 2*(r.height + r.witdh);
+	perimeter := 2*(r.height + r.width);
 	return perimeter;
 }
 func (c Circle) name() string {
-	return c.name;
+	return c.nam;
 }
 
 func (c Circle) area() float64{
@@ -58,7 +65,7 @@ func(c Circle) perimeter() float64{
 }
 
 func (t Triangle) name() string {
-	return t.name;
+	return t.nam;
 }
 
 func (t Triangle) area() float64{
@@ -72,34 +79,75 @@ func (t Triangle) perimeter() float64{
 }
 
 func print_figure(f Figure){
-	fmt.Printf("Hola soy un: %s\nArea: %.2f cm²\nPerimetro: %.2f" , f.name, f.area(),f.perimeter());
+	fmt.Printf("Hola soy un: %s\nArea: %.2f cm²\nPerimetro: %.2f\n" , f.name(), f.area(),f.perimeter());
 	return;
 }
 
-func float_validation(input string) (float64, bool){
-	temp, err := strconv.ParseFloat(input,64)
-	if err != nil || math.isNaN(temp) || math.isInf(tem,0){
-		return 0, false;
+func float_validation(input string) float64{
+	temp, err := strconv.ParseFloat(strings.TrimSpace(input),64)
+	if err != nil || math.IsNaN(temp) || math.IsInf(temp,0){
+		return 0
 	}
-	return temp, true;
+	return temp
 }
 
-func integer_validation(input string) (float64, bool){
-	temp, err := strconv.Atoi
+func integer_validation(input string) int{
+	temp, err := strconv.Atoi(strings.TrimSpace(input))
+	if err != nil {
+		fmt.Println("Entrada inválida: digite un número entero.")
+		return 0;
+	}
+	return temp;
 }
 
 func main(){
 	scanner := bufio.NewScanner(os.Stdin);
 	//Declaracion de ciclo infinito se hace con for {} aura
-	for {
-		fmt.Print("Ingrese que figura quiere calcular (1: Rectangulo / 2: Circulo / 3: Triangulo)")
-		_, err := fmt
-		//ENTRADA DE TEXTO POR CONSOLA
-		input := strings.TrimSpace(scanner.Text());
-		//VALIDACION DE TIPO DE DATOS DE ENTRADA
-		var op int;
-		op, err := strconv.ParseFloat(input,64);
-		if err != nil || math.isNaN(op)
+	for{
+		var op_string string;
+		fmt.Println("Figura que desea calcular:\nA = Rectangulo\nB = Circunferencia\nC = Triangle\nD = Exit")
+		fmt.Print("Opcion: ")
+		if !scanner.Scan() {
+			break
+		}
+		op_string = strings.ToLower(scanner.Text());
+		switch op_string{
+		case "a":
+			var h float64
+			var w float64
+			fmt.Println("Haz elegido el Rectangulo a continuacion ingrese sus datos: ")
+			fmt.Print("Altura : ")
+			fmt.Scan(&h)
+			fmt.Print("Anchura : ")
+			fmt.Scan(&w)
+			fig := Rectangle{nam: "Rectangulo", height: h, width: w}
+			print_figure(fig);
+		case "b":
+			var r float64
+			fmt.Println("Haz elegido la Circunferencia a continuacion ingrese sus datos: ")
+			fmt.Print("Radio : ")
+			fmt.Scan(&r)
+			fig := Circle{nam: "Circunferencia", radious: r}
+			print_figure(fig);
+		case "c":
+			var lado_a float64;
+			var lado_b float64;
+			var lado_c float64;
+			fmt.Println("Haz elegido el Triangulo a continuacion ingrese sus datos: ")
+			fmt.Print("Largo lado A: ")
+			fmt.Scan(&lado_a)
+			fmt.Print("Largo lado B: ")
+			fmt.Scan(&lado_b)
+			fmt.Print("Largo lado C: ")
+			fmt.Scan(&lado_c)
+			fig := Triangle{nam: "Triangulo", a: lado_a, b: lado_b, c: lado_c}
+			print_figure(fig);
+		case "d":
+			fmt.Println("Gracias por usar este sitema")
+			os.Exit(0); 
+		default:
+			fmt.Println("Error: Campo no valido")
+		}
 		
 	}
 }
